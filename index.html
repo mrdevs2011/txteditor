@@ -6,30 +6,22 @@
   <title>MRTextEditor</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       font-family: 'Segoe UI', system-ui, sans-serif;
       background: #1e1e1e;
-      color: #cccccc;
+      color: #ccc;
       height: 100vh;
       overflow: hidden;
     }
+    .app { display: flex; height: 100vh; }
 
-    .app {
-      display: flex;
-      height: 100vh;
-    }
-
-    /* SIDEBAR */
     .sidebar {
-      width: 260px;
+      width: 250px;
       background: #252526;
       border-right: 1px solid #3c3c3c;
       display: flex;
       flex-direction: column;
-      flex-shrink: 0;
     }
-
     .sidebar-header {
       padding: 14px 16px;
       font-size: 13px;
@@ -39,27 +31,19 @@
       align-items: center;
       gap: 8px;
     }
-
     .logo {
-      width: 18px;
-      height: 18px;
+      width: 18px; height: 18px;
       background: #007acc;
       border-radius: 3px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 700;
-      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: white;
     }
-
     .sidebar-actions {
       padding: 10px;
       display: flex;
       gap: 6px;
       border-bottom: 1px solid #3c3c3c;
     }
-
     .action-btn {
       flex: 1;
       background: #3c3c3c;
@@ -70,55 +54,35 @@
       color: #ccc;
       cursor: pointer;
     }
-
     .action-btn:hover {
       background: #4a4a4a;
       border-color: #007acc;
       color: #fff;
     }
-
     .file-tree {
       flex: 1;
       overflow-y: auto;
       padding: 8px 6px;
     }
-
-    .file-item, .folder-item {
+    .file-item {
       padding: 7px 12px;
       font-size: 13px;
       border-radius: 4px;
       cursor: pointer;
       margin-bottom: 2px;
-      user-select: none;
     }
-
-    .file-item:hover, .folder-item:hover {
-      background: #2a2d2e;
-    }
-
+    .file-item:hover { background: #2a2d2e; }
     .file-item.active {
       background: #37373d;
       color: #fff;
     }
 
-    .folder-item {
-      color: #e8ab53;
-      font-weight: 500;
-    }
-
-    .file-item {
-      color: #ccc;
-      padding-left: 28px;
-    }
-
-    /* MAIN */
     .main {
       flex: 1;
       display: flex;
       flex-direction: column;
       min-width: 0;
     }
-
     .toolbar {
       height: 42px;
       background: #2d2d2d;
@@ -128,7 +92,6 @@
       padding: 0 12px;
       gap: 8px;
     }
-
     .tool-btn {
       background: #3c3c3c;
       border: 1px solid #555;
@@ -139,18 +102,13 @@
       cursor: pointer;
       height: 28px;
     }
-
     .tool-btn:hover {
       background: #4a4a4a;
       border-color: #007acc;
       color: #fff;
     }
 
-    .content {
-      flex: 1;
-      display: flex;
-      overflow: hidden;
-    }
+    .content { flex: 1; display: flex; overflow: hidden; }
 
     .editor-pane {
       flex: 1;
@@ -159,7 +117,6 @@
       border-right: 1px solid #3c3c3c;
       min-width: 0;
     }
-
     .editor-header {
       height: 32px;
       background: #252526;
@@ -170,7 +127,6 @@
       font-size: 12px;
       color: #858585;
     }
-
     #editor {
       flex: 1;
       width: 100%;
@@ -187,14 +143,13 @@
     }
 
     .preview-pane {
-      width: 42%;
-      min-width: 300px;
+      width: 45%;
+      min-width: 320px;
       background: #1e1e1e;
       display: flex;
       flex-direction: column;
       border-left: 1px solid #3c3c3c;
     }
-
     .preview-header {
       height: 32px;
       background: #252526;
@@ -206,12 +161,11 @@
       font-size: 12px;
       color: #858585;
     }
-
     #preview-frame {
       flex: 1;
       width: 100%;
       border: none;
-      background: white;
+      background: #ffffff;
     }
 
     .status-bar {
@@ -228,222 +182,142 @@
 </head>
 <body>
   <div class="app">
-    <!-- SIDEBAR -->
     <div class="sidebar">
       <div class="sidebar-header">
         <div class="logo">M</div>
         MRTextEditor
       </div>
-
       <div class="sidebar-actions">
-        <button class="action-btn" onclick="createFolder()">New Folder</button>
         <button class="action-btn" onclick="createFile()">New File</button>
+        <button class="action-btn" onclick="runPreview()">Run</button>
       </div>
-
       <div class="file-tree" id="fileTree"></div>
     </div>
 
-    <!-- MAIN -->
     <div class="main">
       <div class="toolbar">
-        <button class="tool-btn" onclick="insertText('<!-- ', ' -->')">Comment HTML</button>
-        <button class="tool-btn" onclick="insertText('/* ', ' */')">Comment CSS/JS</button>
+        <button class="tool-btn" onclick="insertText('<!-- ', ' -->')">HTML Comment</button>
+        <button class="tool-btn" onclick="insertText('/* ', ' */')">CSS/JS Comment</button>
         <button class="tool-btn" onclick="insertText('console.log(', ')')">console.log</button>
-        <button class="tool-btn" onclick="formatCode()">Format</button>
         <button class="tool-btn" onclick="runPreview()">Run Preview</button>
       </div>
 
       <div class="content">
         <div class="editor-pane">
-          <div class="editor-header" id="currentFileName">No file selected</div>
-          <textarea id="editor" spellcheck="false" placeholder="Select or create a file..."></textarea>
+          <div class="editor-header" id="currentFileName">index.html</div>
+          <textarea id="editor" spellcheck="false"></textarea>
         </div>
 
         <div class="preview-pane">
           <div class="preview-header">
             <span>PREVIEW</span>
-            <span style="font-size:11px;opacity:0.7">Live</span>
+            <span style="font-size:11px;opacity:0.7">Saved in localStorage</span>
           </div>
-          <iframe id="preview-frame" sandbox="allow-scripts allow-same-origin"></iframe>
+          <iframe id="preview-frame"></iframe>
         </div>
       </div>
 
       <div class="status-bar">
-        <span id="file-info">Ready</span>
-        <span>HTML / CSS / JS</span>
+        <span id="file-info">index.html</span>
+        <span>HTML / CSS / JS + CDN</span>
         <span>MRTextEditor</span>
       </div>
     </div>
   </div>
 
   <script>
-    // ===================== FILE SYSTEM =====================
-    let fileSystem = {
+    // ===================== DEFAULT FILES =====================
+    const defaultFiles = {
       "index.html": {
         type: "file",
         content: `<!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Project</title>
-  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"><\/script>
 </head>
-<body>
-  <h1>Hello from MRTextEditor</h1>
-  <p>Edit the files and see live result.</p>
-  <button id="btn">Click me</button>
-
-  <script src="script.js"><\/script>
+<body class="bg-slate-100 min-h-screen flex items-center justify-center">
+  <h1 class="text-3xl font-bold text-slate-800">Hello from MRTextEditor</h1>
 </body>
 </html>`
-      },
-      "style.css": {
-        type: "file",
-        content: `body {
-  font-family: system-ui, sans-serif;
-  background: #f0f4ff;
-  color: #222;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  margin: 0;
-}
-
-h1 {
-  color: #007acc;
-}
-
-button {
-  margin-top: 20px;
-  padding: 12px 24px;
-  font-size: 16px;
-  background: #007acc;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #005f9e;
-}`
-      },
-      "script.js": {
-        type: "file",
-        content: `document.getElementById('btn').addEventListener('click', () => {
-  alert('JavaScript is working!');
-});
-
-console.log('script.js loaded successfully');`
       }
     };
 
+    let fileSystem = {};
     let currentFile = "index.html";
-    let openFolders = new Set();
 
-    // ===================== RENDER TREE =====================
+    const editor = document.getElementById('editor');
+    const iframe = document.getElementById('preview-frame');
+
+    // ===================== LOCAL STORAGE =====================
+    function saveToStorage() {
+      // Hozirgi fayl kontentini ham saqlaymiz
+      if (currentFile && fileSystem[currentFile]) {
+        fileSystem[currentFile].content = editor.value;
+      }
+      localStorage.setItem('mrtexteditor-files', JSON.stringify(fileSystem));
+      localStorage.setItem('mrtexteditor-current', currentFile);
+    }
+
+    function loadFromStorage() {
+      const saved = localStorage.getItem('mrtexteditor-files');
+      if (saved) {
+        try {
+          fileSystem = JSON.parse(saved);
+          const lastFile = localStorage.getItem('mrtexteditor-current');
+          if (lastFile && fileSystem[lastFile]) {
+            currentFile = lastFile;
+          } else {
+            currentFile = Object.keys(fileSystem)[0] || "index.html";
+          }
+          return true;
+        } catch (e) {
+          console.error("localStorage o'qishda xato:", e);
+        }
+      }
+      // Agar saqlangan narsa bo'lmasa - default
+      fileSystem = JSON.parse(JSON.stringify(defaultFiles));
+      currentFile = "index.html";
+      return false;
+    }
+
+    // ===================== FILE TREE =====================
     function renderFileTree() {
       const tree = document.getElementById('fileTree');
       tree.innerHTML = '';
-
-      const folders = {};
-      const rootFiles = [];
-
-      for (const [name, item] of Object.entries(fileSystem)) {
-        if (item.type === "folder") {
-          folders[name] = true;
-        } else if (!name.includes('/')) {
-          rootFiles.push(name);
-        }
-      }
-
-      // Folders
-      Object.keys(folders).sort().forEach(folderName => {
-        const isOpen = openFolders.has(folderName);
-        const folderEl = document.createElement('div');
-        folderEl.className = 'folder-item';
-        folderEl.textContent = (isOpen ? '▼ ' : '▶ ') + folderName;
-        folderEl.onclick = () => {
-          isOpen ? openFolders.delete(folderName) : openFolders.add(folderName);
-          renderFileTree();
-        };
-        tree.appendChild(folderEl);
-
-        if (isOpen) {
-          for (const [fullName, item] of Object.entries(fileSystem)) {
-            if (item.type === "file" && fullName.startsWith(folderName + "/")) {
-              const fileName = fullName.split('/').pop();
-              const fileEl = document.createElement('div');
-              fileEl.className = 'file-item' + (fullName === currentFile ? ' active' : '');
-              fileEl.textContent = fileName;
-              fileEl.onclick = (e) => {
-                e.stopPropagation();
-                openFile(fullName);
-              };
-              tree.appendChild(fileEl);
-            }
-          }
-        }
+      Object.keys(fileSystem).sort().forEach(name => {
+        const el = document.createElement('div');
+        el.className = 'file-item' + (name === currentFile ? ' active' : '');
+        el.textContent = name;
+        el.onclick = () => openFile(name);
+        tree.appendChild(el);
       });
-
-      // Root files
-      rootFiles.sort().forEach(name => {
-        const fileEl = document.createElement('div');
-        fileEl.className = 'file-item' + (name === currentFile ? ' active' : '');
-        fileEl.textContent = name;
-        fileEl.onclick = () => openFile(name);
-        tree.appendChild(fileEl);
-      });
-    }
-
-    // ===================== CREATE =====================
-    function createFolder() {
-      const name = prompt("Folder name:");
-      if (!name || !name.trim()) return;
-      const folderName = name.trim();
-      if (fileSystem[folderName]) return alert("Already exists!");
-      fileSystem[folderName] = { type: "folder" };
-      openFolders.add(folderName);
-      renderFileTree();
     }
 
     function createFile() {
-      const name = prompt("File name (example: app.js or style.css or page.html):");
+      const name = prompt("Fayl nomi (masalan: style.css, app.js, page.html):");
       if (!name || !name.trim()) return;
+      if (fileSystem[name]) return alert("Fayl allaqachon mavjud!");
 
-      let fileName = name.trim();
-      const folder = prompt("Put inside folder? (leave empty for root):");
-      let fullPath = fileName;
-
-      if (folder && folder.trim()) {
-        const folderName = folder.trim();
-        if (!fileSystem[folderName]) {
-          fileSystem[folderName] = { type: "folder" };
-          openFolders.add(folderName);
-        }
-        fullPath = folderName + "/" + fileName;
+      let content = "";
+      if (name.endsWith('.html')) {
+        content = `<!DOCTYPE html>\n<html>\n<head>\n  <title>New Page</title>\n</head>\n<body>\n  \n</body>\n</html>`;
+      } else if (name.endsWith('.css')) {
+        content = `/* ${name} */\n`;
+      } else if (name.endsWith('.js')) {
+        content = `// ${name}\n`;
       }
 
-      if (fileSystem[fullPath]) return alert("File already exists!");
-
-      let defaultContent = "";
-      if (fileName.endsWith('.html')) {
-        defaultContent = `<!DOCTYPE html>\n<html>\n<head>\n  <title>New Page</title>\n</head>\n<body>\n  \n</body>\n</html>`;
-      } else if (fileName.endsWith('.css')) {
-        defaultContent = `/* ${fileName} */\n`;
-      } else if (fileName.endsWith('.js')) {
-        defaultContent = `// ${fileName}\n`;
-      }
-
-      fileSystem[fullPath] = { type: "file", content: defaultContent };
-      openFile(fullPath);
+      fileSystem[name] = { type: "file", content };
+      openFile(name);
+      saveToStorage();
       renderFileTree();
     }
 
-    // ===================== OPEN FILE =====================
     function openFile(path) {
+      // Avvalgi faylni saqlaymiz
       if (currentFile && fileSystem[currentFile]) {
         fileSystem[currentFile].content = editor.value;
       }
@@ -452,69 +326,55 @@ console.log('script.js loaded successfully');`
       editor.value = fileSystem[path].content || "";
       document.getElementById('currentFileName').textContent = path;
       document.getElementById('file-info').textContent = path;
+
+      saveToStorage();
       updatePreview();
       renderFileTree();
       editor.focus();
     }
 
-    // ===================== PREVIEW ENGINE =====================
-    function findFile(name) {
-      // exact match or just filename
-      if (fileSystem[name]) return fileSystem[name];
-      for (const key of Object.keys(fileSystem)) {
-        if (key.endsWith('/' + name) || key === name) {
-          return fileSystem[key];
-        }
-      }
-      return null;
-    }
+    // ===================== PREVIEW =====================
+    function buildPreview() {
+      let html = "";
 
-    function buildPreviewHTML() {
-      // Prefer currently open HTML, otherwise index.html, otherwise first HTML
-      let htmlPath = null;
       if (currentFile.endsWith('.html')) {
-        htmlPath = currentFile;
-      } else if (fileSystem['index.html']) {
-        htmlPath = 'index.html';
+        html = editor.value;
+      } else if (fileSystem["index.html"]) {
+        html = fileSystem["index.html"].content;
       } else {
+        // Birinchi topilgan HTML
         for (const name of Object.keys(fileSystem)) {
           if (name.endsWith('.html')) {
-            htmlPath = name;
+            html = fileSystem[name].content;
             break;
           }
         }
       }
 
-      if (!htmlPath) {
+      if (!html) {
         return `<html><body style="font-family:sans-serif;padding:40px;color:#666">
-          <h2>No HTML file found</h2>
-          <p>Create an <b>index.html</b> file to see preview.</p>
+          <h2>HTML fayl topilmadi</h2>
+          <p>index.html yarating</p>
         </body></html>`;
       }
 
-      let html = fileSystem[htmlPath].content;
-
-      // Replace CSS links with actual content
+      // Local CSS
       html = html.replace(
         /<link[^>]+href=["']([^"']+\.css)["'][^>]*>/gi,
         (match, href) => {
-          const file = findFile(href);
-          if (file) {
-            return `<style>\n/* ${href} */\n${file.content}\n</style>`;
-          }
-          return `<!-- CSS not found: ${href} -->`;
+          if (href.startsWith('http')) return match;
+          const file = fileSystem[href];
+          return file ? `<style>\n/* ${href} */\n${file.content}\n</style>` : match;
         }
       );
 
-      // Replace external JS with actual content
+      // Local JS
       html = html.replace(
         /<script[^>]+src=["']([^"']+\.js)["'][^>]*>\s*<\/script>/gi,
         (match, src) => {
-          const file = findFile(src);
-          if (file) {
-            return `<script>\n// ${src}\n${file.content}\n<\/script>`;
-          }
-          return `<!-- JS not found: ${src} -->`;
+          if (src.startsWith('http')) return match;
+          const file = fileSystem[src];
+          return file ? `<script>\n// ${src}\n${file.content}\n<\/script>` : match;
         }
       );
 
@@ -522,65 +382,49 @@ console.log('script.js loaded successfully');`
     }
 
     function updatePreview() {
-      const iframe = document.getElementById('preview-frame');
-      iframe.srcdoc = buildPreviewHTML();
-    }
-
-    function runPreview() {
-      // force save + refresh
       if (currentFile && fileSystem[currentFile]) {
         fileSystem[currentFile].content = editor.value;
       }
-      updatePreview();
+      iframe.srcdoc = buildPreview();
+      saveToStorage(); // har o'zgarishda saqlaymiz
     }
 
-    // ===================== TOOLBAR ACTIONS =====================
-    const editor = document.getElementById('editor');
+    function runPreview() {
+      updatePreview();
+    }
 
     function insertText(before, after = '') {
       const start = editor.selectionStart;
       const end = editor.selectionEnd;
       const selected = editor.value.substring(start, end);
-      const newText = before + selected + after;
-      editor.value = editor.value.substring(0, start) + newText + editor.value.substring(end);
+      editor.value = editor.value.substring(0, start) + before + selected + after + editor.value.substring(end);
       editor.focus();
       editor.selectionStart = editor.selectionEnd = start + before.length + selected.length + after.length;
-      triggerChange();
-    }
-
-    function formatCode() {
-      // Very simple formatter (just basic indentation cleanup)
-      let code = editor.value;
-      // basic: ensure newlines after { and }
-      code = code.replace(/\{/g, ' {\n  ').replace(/\}/g, '\n}\n');
-      editor.value = code;
-      triggerChange();
-    }
-
-    function triggerChange() {
-      if (currentFile && fileSystem[currentFile]) {
-        fileSystem[currentFile].content = editor.value;
-      }
       updatePreview();
     }
 
-    // Auto update
-    editor.addEventListener('input', triggerChange);
+    // ===================== EVENTS =====================
+    editor.addEventListener('input', () => {
+      updatePreview();
+    });
 
-    // Tab support
     editor.addEventListener('keydown', function(e) {
       if (e.key === 'Tab') {
         e.preventDefault();
         const start = this.selectionStart;
         this.value = this.value.substring(0, start) + '  ' + this.value.substring(this.selectionEnd);
         this.selectionStart = this.selectionEnd = start + 2;
-        triggerChange();
+        updatePreview();
       }
     });
 
-    // Init
+    // Sahifa yopilishidan oldin saqlash
+    window.addEventListener('beforeunload', saveToStorage);
+
+    // ===================== INIT =====================
+    loadFromStorage();
     renderFileTree();
-    openFile("index.html");
+    openFile(currentFile);
   </script>
 </body>
 </html>
