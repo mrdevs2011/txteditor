@@ -5,11 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MRTextEditor</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -26,7 +22,7 @@
 
     /* ===== SIDEBAR ===== */
     .sidebar {
-      width: 240px;
+      width: 260px;
       background: #252526;
       border-right: 1px solid #3c3c3c;
       display: flex;
@@ -43,10 +39,9 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      letter-spacing: 0.3px;
     }
 
-    .sidebar-header span {
+    .sidebar-header .logo {
       width: 18px;
       height: 18px;
       background: #007acc;
@@ -59,36 +54,78 @@
       color: white;
     }
 
-    .sidebar-items {
-      padding: 12px 10px;
+    .sidebar-actions {
+      padding: 10px;
       display: flex;
-      flex-direction: column;
       gap: 6px;
+      border-bottom: 1px solid #3c3c3c;
     }
 
-    .sidebar-btn {
-      background: transparent;
-      border: 1px solid transparent;
+    .action-btn {
+      flex: 1;
+      background: #3c3c3c;
+      border: 1px solid #555;
       border-radius: 4px;
-      padding: 9px 12px;
-      font-size: 13px;
-      color: #cccccc;
-      text-align: left;
+      padding: 6px 8px;
+      font-size: 12px;
+      color: #ccc;
       cursor: pointer;
-      transition: all 0.15s;
+      transition: 0.15s;
     }
 
-    .sidebar-btn:hover {
+    .action-btn:hover {
+      background: #4a4a4a;
+      border-color: #007acc;
+      color: #fff;
+    }
+
+    .file-tree {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 6px;
+    }
+
+    .file-item, .folder-item {
+      padding: 7px 12px;
+      font-size: 13px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 2px;
+      user-select: none;
+    }
+
+    .file-item:hover, .folder-item:hover {
       background: #2a2d2e;
     }
 
-    .sidebar-btn.active {
+    .file-item.active {
       background: #37373d;
-      border-color: #007acc;
-      color: #ffffff;
+      color: #fff;
     }
 
-    /* ===== MAIN AREA ===== */
+    .folder-item {
+      color: #e8ab53;
+      font-weight: 500;
+    }
+
+    .file-item {
+      color: #cccccc;
+      padding-left: 28px;
+    }
+
+    .folder-content {
+      display: none;
+      padding-left: 12px;
+    }
+
+    .folder-item.open + .folder-content {
+      display: block;
+    }
+
+    /* ===== MAIN ===== */
     .main {
       flex: 1;
       display: flex;
@@ -96,7 +133,6 @@
       min-width: 0;
     }
 
-    /* Toolbar */
     .toolbar {
       height: 42px;
       background: #2d2d2d;
@@ -105,7 +141,6 @@
       align-items: center;
       padding: 0 12px;
       gap: 8px;
-      flex-shrink: 0;
     }
 
     .tool-btn {
@@ -114,9 +149,8 @@
       border-radius: 4px;
       padding: 5px 14px;
       font-size: 12px;
-      color: #cccccc;
+      color: #ccc;
       cursor: pointer;
-      transition: all 0.15s;
       height: 28px;
     }
 
@@ -126,13 +160,6 @@
       color: #fff;
     }
 
-    .tool-btn.active {
-      background: #007acc;
-      border-color: #007acc;
-      color: #fff;
-    }
-
-    /* Editor + Preview split */
     .content {
       flex: 1;
       display: flex;
@@ -170,10 +197,8 @@
       font-size: 14px;
       line-height: 1.6;
       resize: none;
-      tab-size: 2;
     }
 
-    /* Preview */
     .preview-pane {
       width: 42%;
       min-width: 280px;
@@ -204,57 +229,17 @@
       color: #d4d4d4;
     }
 
-    #preview h1, #preview h2, #preview h3 {
-      color: #ffffff;
-      margin: 1.2em 0 0.5em;
-    }
+    #preview h1 { font-size: 1.8em; color: #fff; border-bottom: 1px solid #3c3c3c; padding-bottom: 0.3em; margin: 1.2em 0 0.5em; }
+    #preview h2 { font-size: 1.4em; color: #fff; margin: 1.2em 0 0.5em; }
+    #preview h3 { font-size: 1.2em; color: #fff; margin: 1.2em 0 0.5em; }
+    #preview p { margin-bottom: 1em; }
+    #preview code { background: #2d2d2d; padding: 2px 6px; border-radius: 3px; font-family: Consolas, monospace; }
+    #preview pre { background: #2d2d2d; padding: 14px; border-radius: 6px; overflow-x: auto; margin: 1em 0; }
+    #preview pre code { background: none; padding: 0; }
+    #preview ul, #preview ol { padding-left: 1.6em; margin-bottom: 1em; }
+    #preview a { color: #4fc1ff; }
+    #preview blockquote { border-left: 4px solid #007acc; padding-left: 14px; color: #999; margin: 1em 0; }
 
-    #preview h1 { font-size: 1.8em; border-bottom: 1px solid #3c3c3c; padding-bottom: 0.3em; }
-    #preview h2 { font-size: 1.4em; }
-    #preview h3 { font-size: 1.2em; }
-
-    #preview p {
-      margin-bottom: 1em;
-    }
-
-    #preview code {
-      background: #2d2d2d;
-      padding: 2px 6px;
-      border-radius: 3px;
-      font-family: Consolas, monospace;
-      font-size: 0.9em;
-    }
-
-    #preview pre {
-      background: #2d2d2d;
-      padding: 14px;
-      border-radius: 6px;
-      overflow-x: auto;
-      margin: 1em 0;
-    }
-
-    #preview pre code {
-      background: none;
-      padding: 0;
-    }
-
-    #preview ul, #preview ol {
-      padding-left: 1.6em;
-      margin-bottom: 1em;
-    }
-
-    #preview a {
-      color: #4fc1ff;
-    }
-
-    #preview blockquote {
-      border-left: 4px solid #007acc;
-      padding-left: 14px;
-      color: #999;
-      margin: 1em 0;
-    }
-
-    /* Status bar */
     .status-bar {
       height: 24px;
       background: #007acc;
@@ -264,11 +249,6 @@
       align-items: center;
       padding: 0 12px;
       justify-content: space-between;
-      flex-shrink: 0;
-    }
-
-    .status-bar span {
-      opacity: 0.95;
     }
   </style>
 </head>
@@ -277,19 +257,20 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
       <div class="sidebar-header">
-        <span>M</span>
+        <div class="logo">M</div>
         MRTextEditor
       </div>
-      <div class="sidebar-items">
-        <button class="sidebar-btn active" onclick="setActive(this)">Documents</button>
-        <button class="sidebar-btn" onclick="setActive(this)">Folders</button>
-        <button class="sidebar-btn" onclick="setActive(this)">Settings</button>
+
+      <div class="sidebar-actions">
+        <button class="action-btn" onclick="createFolder()">New Folder</button>
+        <button class="action-btn" onclick="createFile()">New File</button>
       </div>
+
+      <div class="file-tree" id="fileTree"></div>
     </div>
 
     <!-- MAIN -->
     <div class="main">
-      <!-- Toolbar -->
       <div class="toolbar">
         <button class="tool-btn" onclick="insertMarkdown('**', '**')">Bold</button>
         <button class="tool-btn" onclick="insertMarkdown('*', '*')">Italic</button>
@@ -298,20 +279,17 @@
       </div>
 
       <div class="content">
-        <!-- Editor -->
         <div class="editor-pane">
-          <div class="editor-header">editor.md</div>
-          <textarea id="editor" placeholder="Write something..." spellcheck="false"></textarea>
+          <div class="editor-header" id="currentFileName">No file selected</div>
+          <textarea id="editor" placeholder="Select or create a file..." spellcheck="false"></textarea>
         </div>
 
-        <!-- Preview -->
         <div class="preview-pane">
           <div class="preview-header">PREVIEW</div>
           <div id="preview"></div>
         </div>
       </div>
 
-      <!-- Status -->
       <div class="status-bar">
         <span id="word-count">0 words</span>
         <span>Markdown • UTF-8</span>
@@ -321,71 +299,220 @@
   </div>
 
   <script>
+    // ============ FILE SYSTEM ============
+    let fileSystem = {
+      "Welcome.md": {
+        type: "file",
+        content: `# Welcome to MRTextEditor
+
+This is a **real file system** simulation.
+
+## Features
+- Create folders and files
+- Open multiple files
+- Live Markdown preview
+- Content is saved automatically when you switch files
+
+### Try it
+1. Click **New Folder** or **New File**
+2. Click on any file to open it
+3. Edit and switch between files
+
+\`\`\`js
+console.log("Hello from MRTextEditor");
+\`\`\`
+`
+      }
+    };
+
+    let currentFile = "Welcome.md";
+    let openFolders = new Set();
+
+    // ============ RENDER FILE TREE ============
+    function renderFileTree() {
+      const tree = document.getElementById('fileTree');
+      tree.innerHTML = '';
+
+      // Group by folders
+      const rootFiles = [];
+      const folders = {};
+
+      for (const [name, item] of Object.entries(fileSystem)) {
+        if (item.type === "folder") {
+          folders[name] = item;
+        } else if (!name.includes('/')) {
+          rootFiles.push(name);
+        }
+      }
+
+      // Render folders first
+      for (const folderName of Object.keys(folders).sort()) {
+        const isOpen = openFolders.has(folderName);
+
+        const folderEl = document.createElement('div');
+        folderEl.className = 'folder-item' + (isOpen ? ' open' : '');
+        folderEl.innerHTML = (isOpen ? '▼ ' : '▶ ') + folderName;
+        folderEl.onclick = () => {
+          if (openFolders.has(folderName)) {
+            openFolders.delete(folderName);
+          } else {
+            openFolders.add(folderName);
+          }
+          renderFileTree();
+        };
+        tree.appendChild(folderEl);
+
+        // Files inside this folder
+        if (isOpen) {
+          const content = document.createElement('div');
+          content.className = 'folder-content';
+          content.style.display = 'block';
+
+          for (const [fullName, item] of Object.entries(fileSystem)) {
+            if (item.type === "file" && fullName.startsWith(folderName + "/")) {
+              const fileName = fullName.split('/').pop();
+              const fileEl = document.createElement('div');
+              fileEl.className = 'file-item' + (fullName === currentFile ? ' active' : '');
+              fileEl.textContent = fileName;
+              fileEl.onclick = (e) => {
+                e.stopPropagation();
+                openFile(fullName);
+              };
+              content.appendChild(fileEl);
+            }
+          }
+          tree.appendChild(content);
+        }
+      }
+
+      // Root files
+      rootFiles.sort().forEach(name => {
+        const fileEl = document.createElement('div');
+        fileEl.className = 'file-item' + (name === currentFile ? ' active' : '');
+        fileEl.textContent = name;
+        fileEl.onclick = () => openFile(name);
+        tree.appendChild(fileEl);
+      });
+    }
+
+    // ============ CREATE FOLDER ============
+    function createFolder() {
+      const name = prompt("Folder name:");
+      if (!name || !name.trim()) return;
+
+      const folderName = name.trim();
+      if (fileSystem[folderName]) {
+        alert("Folder already exists!");
+        return;
+      }
+
+      fileSystem[folderName] = { type: "folder" };
+      openFolders.add(folderName);
+      renderFileTree();
+    }
+
+    // ============ CREATE FILE ============
+    function createFile() {
+      const name = prompt("File name (example: notes.md):");
+      if (!name || !name.trim()) return;
+
+      let fileName = name.trim();
+      if (!fileName.endsWith('.md') && !fileName.endsWith('.txt')) {
+        fileName += '.md';
+      }
+
+      // Ask which folder (optional)
+      const folder = prompt("Put inside folder? (leave empty for root):");
+      let fullPath = fileName;
+
+      if (folder && folder.trim()) {
+        const folderName = folder.trim();
+        if (!fileSystem[folderName] || fileSystem[folderName].type !== "folder") {
+          // create folder if not exists
+          fileSystem[folderName] = { type: "folder" };
+          openFolders.add(folderName);
+        }
+        fullPath = folderName + "/" + fileName;
+      }
+
+      if (fileSystem[fullPath]) {
+        alert("File already exists!");
+        return;
+      }
+
+      fileSystem[fullPath] = {
+        type: "file",
+        content: `# ${fileName}\n\nStart writing here...\n`
+      };
+
+      openFile(fullPath);
+      renderFileTree();
+    }
+
+    // ============ OPEN FILE ============
+    function openFile(path) {
+      // Save current file content first
+      if (currentFile && fileSystem[currentFile]) {
+        fileSystem[currentFile].content = editor.value;
+      }
+
+      currentFile = path;
+      editor.value = fileSystem[path].content || "";
+      document.getElementById('currentFileName').textContent = path;
+      updatePreview();
+      renderFileTree();
+      editor.focus();
+    }
+
+    // ============ MARKDOWN & PREVIEW ============
     const editor = document.getElementById('editor');
     const preview = document.getElementById('preview');
     const wordCountEl = document.getElementById('word-count');
 
-    // Simple Markdown → HTML converter
     function markdownToHtml(md) {
       let html = md
-        // Code blocks
         .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
-        // Inline code
         .replace(/`([^`]+)`/g, '<code>$1</code>')
-        // Headers
         .replace(/^### (.*$)/gim, '<h3>$1</h3>')
         .replace(/^## (.*$)/gim, '<h2>$1</h2>')
         .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-        // Bold & Italic
         .replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>')
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        // Links
         .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
-        // Blockquotes
         .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
-        // Lists
         .replace(/^\s*[-*] (.*$)/gim, '<li>$1</li>')
-        // Paragraphs
         .replace(/\n\n/g, '</p><p>')
         .replace(/\n/g, '<br>');
 
-      // Wrap list items
       html = html.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
-
       return '<p>' + html + '</p>';
     }
 
     function updatePreview() {
       const text = editor.value;
       preview.innerHTML = markdownToHtml(text);
-
-      // Word count
       const words = text.trim() ? text.trim().split(/\s+/).length : 0;
       wordCountEl.textContent = words + ' words';
     }
 
-    // Insert markdown syntax
     function insertMarkdown(before, after) {
       const start = editor.selectionStart;
       const end = editor.selectionEnd;
       const selected = editor.value.substring(start, end);
-      const newText = before + selected + after;
-
-      editor.value = editor.value.substring(0, start) + newText + editor.value.substring(end);
+      editor.value = editor.value.substring(0, start) + before + selected + after + editor.value.substring(end);
       editor.focus();
       editor.selectionStart = editor.selectionEnd = start + before.length + selected.length + after.length;
       updatePreview();
     }
 
-    // Sidebar active state
-    function setActive(btn) {
-      document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    }
-
-    // Live update
-    editor.addEventListener('input', updatePreview);
+    // Auto-save on input
+    editor.addEventListener('input', () => {
+      if (currentFile && fileSystem[currentFile]) {
+        fileSystem[currentFile].content = editor.value;
+      }
+      updatePreview();
+    });
 
     // Tab support
     editor.addEventListener('keydown', function(e) {
@@ -398,31 +525,9 @@
       }
     });
 
-    // Initial content
-    editor.value = `# Welcome to MRTextEditor
-
-This is a **live Markdown** editor with preview.
-
-## Features
-- Real-time preview
-- Clean VS Code-like interface
-- Basic Markdown support
-
-### Try it
-Write some text on the left and see the result on the right.
-
-\`\`\`
-console.log("Hello World");
-\`\`\`
-
-> This is a blockquote
-
-- List item one
-- List item two
-`;
-
-    updatePreview();
-    editor.focus();
+    // Init
+    renderFileTree();
+    openFile("Welcome.md");
   </script>
 </body>
 </html>
