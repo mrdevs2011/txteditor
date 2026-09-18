@@ -8,7 +8,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-family: 'Segoe UI', system-ui, sans-serif;
       background: #1e1e1e;
       color: #cccccc;
       height: 100vh;
@@ -20,7 +20,7 @@
       height: 100vh;
     }
 
-    /* ===== SIDEBAR ===== */
+    /* SIDEBAR */
     .sidebar {
       width: 260px;
       background: #252526;
@@ -34,19 +34,18 @@
       padding: 14px 16px;
       font-size: 13px;
       font-weight: 600;
-      color: #cccccc;
       border-bottom: 1px solid #3c3c3c;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .sidebar-header .logo {
+    .logo {
       width: 18px;
       height: 18px;
       background: #007acc;
       border-radius: 3px;
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
       font-size: 11px;
@@ -70,7 +69,6 @@
       font-size: 12px;
       color: #ccc;
       cursor: pointer;
-      transition: 0.15s;
     }
 
     .action-btn:hover {
@@ -90,9 +88,6 @@
       font-size: 13px;
       border-radius: 4px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
       margin-bottom: 2px;
       user-select: none;
     }
@@ -112,20 +107,11 @@
     }
 
     .file-item {
-      color: #cccccc;
+      color: #ccc;
       padding-left: 28px;
     }
 
-    .folder-content {
-      display: none;
-      padding-left: 12px;
-    }
-
-    .folder-item.open + .folder-content {
-      display: block;
-    }
-
-    /* ===== MAIN ===== */
+    /* MAIN */
     .main {
       flex: 1;
       display: flex;
@@ -195,13 +181,14 @@
       padding: 16px 18px;
       font-family: 'Consolas', 'Courier New', monospace;
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.55;
       resize: none;
+      tab-size: 2;
     }
 
     .preview-pane {
       width: 42%;
-      min-width: 280px;
+      min-width: 300px;
       background: #1e1e1e;
       display: flex;
       flex-direction: column;
@@ -214,31 +201,18 @@
       border-bottom: 1px solid #3c3c3c;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       padding: 0 14px;
       font-size: 12px;
       color: #858585;
-      letter-spacing: 0.5px;
     }
 
-    #preview {
+    #preview-frame {
       flex: 1;
-      padding: 20px 24px;
-      overflow-y: auto;
-      font-size: 15px;
-      line-height: 1.7;
-      color: #d4d4d4;
+      width: 100%;
+      border: none;
+      background: white;
     }
-
-    #preview h1 { font-size: 1.8em; color: #fff; border-bottom: 1px solid #3c3c3c; padding-bottom: 0.3em; margin: 1.2em 0 0.5em; }
-    #preview h2 { font-size: 1.4em; color: #fff; margin: 1.2em 0 0.5em; }
-    #preview h3 { font-size: 1.2em; color: #fff; margin: 1.2em 0 0.5em; }
-    #preview p { margin-bottom: 1em; }
-    #preview code { background: #2d2d2d; padding: 2px 6px; border-radius: 3px; font-family: Consolas, monospace; }
-    #preview pre { background: #2d2d2d; padding: 14px; border-radius: 6px; overflow-x: auto; margin: 1em 0; }
-    #preview pre code { background: none; padding: 0; }
-    #preview ul, #preview ol { padding-left: 1.6em; margin-bottom: 1em; }
-    #preview a { color: #4fc1ff; }
-    #preview blockquote { border-left: 4px solid #007acc; padding-left: 14px; color: #999; margin: 1em 0; }
 
     .status-bar {
       height: 24px;
@@ -272,102 +246,132 @@
     <!-- MAIN -->
     <div class="main">
       <div class="toolbar">
-        <button class="tool-btn" onclick="insertMarkdown('**', '**')">Bold</button>
-        <button class="tool-btn" onclick="insertMarkdown('*', '*')">Italic</button>
-        <button class="tool-btn" onclick="insertMarkdown('`', '`')">Code</button>
-        <button class="tool-btn" onclick="insertMarkdown('# ', '')">Heading</button>
+        <button class="tool-btn" onclick="insertText('<!-- ', ' -->')">Comment HTML</button>
+        <button class="tool-btn" onclick="insertText('/* ', ' */')">Comment CSS/JS</button>
+        <button class="tool-btn" onclick="insertText('console.log(', ')')">console.log</button>
+        <button class="tool-btn" onclick="formatCode()">Format</button>
+        <button class="tool-btn" onclick="runPreview()">Run Preview</button>
       </div>
 
       <div class="content">
         <div class="editor-pane">
           <div class="editor-header" id="currentFileName">No file selected</div>
-          <textarea id="editor" placeholder="Select or create a file..." spellcheck="false"></textarea>
+          <textarea id="editor" spellcheck="false" placeholder="Select or create a file..."></textarea>
         </div>
 
         <div class="preview-pane">
-          <div class="preview-header">PREVIEW</div>
-          <div id="preview"></div>
+          <div class="preview-header">
+            <span>PREVIEW</span>
+            <span style="font-size:11px;opacity:0.7">Live</span>
+          </div>
+          <iframe id="preview-frame" sandbox="allow-scripts allow-same-origin"></iframe>
         </div>
       </div>
 
       <div class="status-bar">
-        <span id="word-count">0 words</span>
-        <span>Markdown • UTF-8</span>
+        <span id="file-info">Ready</span>
+        <span>HTML / CSS / JS</span>
         <span>MRTextEditor</span>
       </div>
     </div>
   </div>
 
   <script>
-    // ============ FILE SYSTEM ============
+    // ===================== FILE SYSTEM =====================
     let fileSystem = {
-      "Welcome.md": {
+      "index.html": {
         type: "file",
-        content: `# Welcome to MRTextEditor
+        content: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Project</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Hello from MRTextEditor</h1>
+  <p>Edit the files and see live result.</p>
+  <button id="btn">Click me</button>
 
-This is a **real file system** simulation.
+  <script src="script.js"><\/script>
+</body>
+</html>`
+      },
+      "style.css": {
+        type: "file",
+        content: `body {
+  font-family: system-ui, sans-serif;
+  background: #f0f4ff;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+}
 
-## Features
-- Create folders and files
-- Open multiple files
-- Live Markdown preview
-- Content is saved automatically when you switch files
+h1 {
+  color: #007acc;
+}
 
-### Try it
-1. Click **New Folder** or **New File**
-2. Click on any file to open it
-3. Edit and switch between files
+button {
+  margin-top: 20px;
+  padding: 12px 24px;
+  font-size: 16px;
+  background: #007acc;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
 
-\`\`\`js
-console.log("Hello from MRTextEditor");
-\`\`\`
-`
+button:hover {
+  background: #005f9e;
+}`
+      },
+      "script.js": {
+        type: "file",
+        content: `document.getElementById('btn').addEventListener('click', () => {
+  alert('JavaScript is working!');
+});
+
+console.log('script.js loaded successfully');`
       }
     };
 
-    let currentFile = "Welcome.md";
+    let currentFile = "index.html";
     let openFolders = new Set();
 
-    // ============ RENDER FILE TREE ============
+    // ===================== RENDER TREE =====================
     function renderFileTree() {
       const tree = document.getElementById('fileTree');
       tree.innerHTML = '';
 
-      // Group by folders
-      const rootFiles = [];
       const folders = {};
+      const rootFiles = [];
 
       for (const [name, item] of Object.entries(fileSystem)) {
         if (item.type === "folder") {
-          folders[name] = item;
+          folders[name] = true;
         } else if (!name.includes('/')) {
           rootFiles.push(name);
         }
       }
 
-      // Render folders first
-      for (const folderName of Object.keys(folders).sort()) {
+      // Folders
+      Object.keys(folders).sort().forEach(folderName => {
         const isOpen = openFolders.has(folderName);
-
         const folderEl = document.createElement('div');
-        folderEl.className = 'folder-item' + (isOpen ? ' open' : '');
-        folderEl.innerHTML = (isOpen ? '▼ ' : '▶ ') + folderName;
+        folderEl.className = 'folder-item';
+        folderEl.textContent = (isOpen ? '▼ ' : '▶ ') + folderName;
         folderEl.onclick = () => {
-          if (openFolders.has(folderName)) {
-            openFolders.delete(folderName);
-          } else {
-            openFolders.add(folderName);
-          }
+          isOpen ? openFolders.delete(folderName) : openFolders.add(folderName);
           renderFileTree();
         };
         tree.appendChild(folderEl);
 
-        // Files inside this folder
         if (isOpen) {
-          const content = document.createElement('div');
-          content.className = 'folder-content';
-          content.style.display = 'block';
-
           for (const [fullName, item] of Object.entries(fileSystem)) {
             if (item.type === "file" && fullName.startsWith(folderName + "/")) {
               const fileName = fullName.split('/').pop();
@@ -378,12 +382,11 @@ console.log("Hello from MRTextEditor");
                 e.stopPropagation();
                 openFile(fullName);
               };
-              content.appendChild(fileEl);
+              tree.appendChild(fileEl);
             }
           }
-          tree.appendChild(content);
         }
-      }
+      });
 
       // Root files
       rootFiles.sort().forEach(name => {
@@ -395,63 +398,52 @@ console.log("Hello from MRTextEditor");
       });
     }
 
-    // ============ CREATE FOLDER ============
+    // ===================== CREATE =====================
     function createFolder() {
       const name = prompt("Folder name:");
       if (!name || !name.trim()) return;
-
       const folderName = name.trim();
-      if (fileSystem[folderName]) {
-        alert("Folder already exists!");
-        return;
-      }
-
+      if (fileSystem[folderName]) return alert("Already exists!");
       fileSystem[folderName] = { type: "folder" };
       openFolders.add(folderName);
       renderFileTree();
     }
 
-    // ============ CREATE FILE ============
     function createFile() {
-      const name = prompt("File name (example: notes.md):");
+      const name = prompt("File name (example: app.js or style.css or page.html):");
       if (!name || !name.trim()) return;
 
       let fileName = name.trim();
-      if (!fileName.endsWith('.md') && !fileName.endsWith('.txt')) {
-        fileName += '.md';
-      }
-
-      // Ask which folder (optional)
       const folder = prompt("Put inside folder? (leave empty for root):");
       let fullPath = fileName;
 
       if (folder && folder.trim()) {
         const folderName = folder.trim();
-        if (!fileSystem[folderName] || fileSystem[folderName].type !== "folder") {
-          // create folder if not exists
+        if (!fileSystem[folderName]) {
           fileSystem[folderName] = { type: "folder" };
           openFolders.add(folderName);
         }
         fullPath = folderName + "/" + fileName;
       }
 
-      if (fileSystem[fullPath]) {
-        alert("File already exists!");
-        return;
+      if (fileSystem[fullPath]) return alert("File already exists!");
+
+      let defaultContent = "";
+      if (fileName.endsWith('.html')) {
+        defaultContent = `<!DOCTYPE html>\n<html>\n<head>\n  <title>New Page</title>\n</head>\n<body>\n  \n</body>\n</html>`;
+      } else if (fileName.endsWith('.css')) {
+        defaultContent = `/* ${fileName} */\n`;
+      } else if (fileName.endsWith('.js')) {
+        defaultContent = `// ${fileName}\n`;
       }
 
-      fileSystem[fullPath] = {
-        type: "file",
-        content: `# ${fileName}\n\nStart writing here...\n`
-      };
-
+      fileSystem[fullPath] = { type: "file", content: defaultContent };
       openFile(fullPath);
       renderFileTree();
     }
 
-    // ============ OPEN FILE ============
+    // ===================== OPEN FILE =====================
     function openFile(path) {
-      // Save current file content first
       if (currentFile && fileSystem[currentFile]) {
         fileSystem[currentFile].content = editor.value;
       }
@@ -459,60 +451,121 @@ console.log("Hello from MRTextEditor");
       currentFile = path;
       editor.value = fileSystem[path].content || "";
       document.getElementById('currentFileName').textContent = path;
+      document.getElementById('file-info').textContent = path;
       updatePreview();
       renderFileTree();
       editor.focus();
     }
 
-    // ============ MARKDOWN & PREVIEW ============
-    const editor = document.getElementById('editor');
-    const preview = document.getElementById('preview');
-    const wordCountEl = document.getElementById('word-count');
+    // ===================== PREVIEW ENGINE =====================
+    function findFile(name) {
+      // exact match or just filename
+      if (fileSystem[name]) return fileSystem[name];
+      for (const key of Object.keys(fileSystem)) {
+        if (key.endsWith('/' + name) || key === name) {
+          return fileSystem[key];
+        }
+      }
+      return null;
+    }
 
-    function markdownToHtml(md) {
-      let html = md
-        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
-        .replace(/`([^`]+)`/g, '<code>$1</code>')
-        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-        .replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
-        .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
-        .replace(/^\s*[-*] (.*$)/gim, '<li>$1</li>')
-        .replace(/\n\n/g, '</p><p>')
-        .replace(/\n/g, '<br>');
+    function buildPreviewHTML() {
+      // Prefer currently open HTML, otherwise index.html, otherwise first HTML
+      let htmlPath = null;
+      if (currentFile.endsWith('.html')) {
+        htmlPath = currentFile;
+      } else if (fileSystem['index.html']) {
+        htmlPath = 'index.html';
+      } else {
+        for (const name of Object.keys(fileSystem)) {
+          if (name.endsWith('.html')) {
+            htmlPath = name;
+            break;
+          }
+        }
+      }
 
-      html = html.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
-      return '<p>' + html + '</p>';
+      if (!htmlPath) {
+        return `<html><body style="font-family:sans-serif;padding:40px;color:#666">
+          <h2>No HTML file found</h2>
+          <p>Create an <b>index.html</b> file to see preview.</p>
+        </body></html>`;
+      }
+
+      let html = fileSystem[htmlPath].content;
+
+      // Replace CSS links with actual content
+      html = html.replace(
+        /<link[^>]+href=["']([^"']+\.css)["'][^>]*>/gi,
+        (match, href) => {
+          const file = findFile(href);
+          if (file) {
+            return `<style>\n/* ${href} */\n${file.content}\n</style>`;
+          }
+          return `<!-- CSS not found: ${href} -->`;
+        }
+      );
+
+      // Replace external JS with actual content
+      html = html.replace(
+        /<script[^>]+src=["']([^"']+\.js)["'][^>]*>\s*<\/script>/gi,
+        (match, src) => {
+          const file = findFile(src);
+          if (file) {
+            return `<script>\n// ${src}\n${file.content}\n<\/script>`;
+          }
+          return `<!-- JS not found: ${src} -->`;
+        }
+      );
+
+      return html;
     }
 
     function updatePreview() {
-      const text = editor.value;
-      preview.innerHTML = markdownToHtml(text);
-      const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-      wordCountEl.textContent = words + ' words';
+      const iframe = document.getElementById('preview-frame');
+      iframe.srcdoc = buildPreviewHTML();
     }
 
-    function insertMarkdown(before, after) {
-      const start = editor.selectionStart;
-      const end = editor.selectionEnd;
-      const selected = editor.value.substring(start, end);
-      editor.value = editor.value.substring(0, start) + before + selected + after + editor.value.substring(end);
-      editor.focus();
-      editor.selectionStart = editor.selectionEnd = start + before.length + selected.length + after.length;
-      updatePreview();
-    }
-
-    // Auto-save on input
-    editor.addEventListener('input', () => {
+    function runPreview() {
+      // force save + refresh
       if (currentFile && fileSystem[currentFile]) {
         fileSystem[currentFile].content = editor.value;
       }
       updatePreview();
-    });
+    }
+
+    // ===================== TOOLBAR ACTIONS =====================
+    const editor = document.getElementById('editor');
+
+    function insertText(before, after = '') {
+      const start = editor.selectionStart;
+      const end = editor.selectionEnd;
+      const selected = editor.value.substring(start, end);
+      const newText = before + selected + after;
+      editor.value = editor.value.substring(0, start) + newText + editor.value.substring(end);
+      editor.focus();
+      editor.selectionStart = editor.selectionEnd = start + before.length + selected.length + after.length;
+      triggerChange();
+    }
+
+    function formatCode() {
+      // Very simple formatter (just basic indentation cleanup)
+      let code = editor.value;
+      // basic: ensure newlines after { and }
+      code = code.replace(/\{/g, ' {\n  ').replace(/\}/g, '\n}\n');
+      editor.value = code;
+      triggerChange();
+    }
+
+    function triggerChange() {
+      if (currentFile && fileSystem[currentFile]) {
+        fileSystem[currentFile].content = editor.value;
+      }
+      updatePreview();
+    }
+
+    // Auto update
+    editor.addEventListener('input', triggerChange);
 
     // Tab support
     editor.addEventListener('keydown', function(e) {
@@ -521,13 +574,13 @@ console.log("Hello from MRTextEditor");
         const start = this.selectionStart;
         this.value = this.value.substring(0, start) + '  ' + this.value.substring(this.selectionEnd);
         this.selectionStart = this.selectionEnd = start + 2;
-        updatePreview();
+        triggerChange();
       }
     });
 
     // Init
     renderFileTree();
-    openFile("Welcome.md");
+    openFile("index.html");
   </script>
 </body>
 </html>
